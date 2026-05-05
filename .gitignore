@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+!custom_components/dectyr_rx5/frontend/dist/
+!custom_components/dectyr_rx5/frontend/dist/**
+custom_components/dectyr_rx5/frontend/node_modules/
+
+# Home Assistant (local dev copies)
+.HA_VERSION
+home-assistant.log*
+home-assistant_v2.db*
+.storage/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# Secrets
+*.secret
+*.key
+*.pem
+.env
+.env.*
+secrets.yaml
+
+# Local-only MQTT schema mirror (optional; not published)
+docs/mqtt-schema.json
+
+# Temporary validation/build logs (don't commit)
+/_release_validate.txt
+/_build_*.txt
+/_test_output.txt

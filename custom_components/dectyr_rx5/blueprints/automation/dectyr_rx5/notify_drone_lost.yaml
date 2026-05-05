@@ -1,0 +1,24 @@
+blueprint:
+  name: "Dectyr — Notify on drone signal loss"
+  description: >
+    Notifies when a previously detected drone goes away (no signal since the
+    timeout configured in the integration options).
+  domain: automation
+  source_url: https://github.com/alexandre0thomas/ha-dectyr/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_lost.yaml
+  input:
+    notify_target:
+      name: Notification target
+      selector:
+        text:
+trigger:
+  - platform: event
+    event_type: dectyr_rx5_drone_lost
+action:
+  - service: !input notify_target
+    data:
+      title: "Drone signal lost"
+      message: >
+        Drone {{ trigger.event.data.drone_id }} is no longer detected.
+        Last known position: {{ trigger.event.data.last_seen }}
+        ({{ trigger.event.data.detected_by | length }} scanner(s) involved)
+mode: parallel

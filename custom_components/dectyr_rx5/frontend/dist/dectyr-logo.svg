@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 36" role="img" aria-label="DECTYR">
+  <title>DECTYR</title>
+  <defs>
+    <style>
+      .mark {
+        fill: #334155;
+      }
+      @media (prefers-color-scheme: dark) {
+        .mark {
+          fill: #e2e8f0;
+        }
+      }
+    </style>
+  </defs>
+  <g class="mark">
+    <path d="M4 6h5c6.5 0 11 4.2 11 10.5S15.5 27 9 27H4V6zm4 4v13h1.5c3.8 0 6.5-2.6 6.5-6.5S13.3 10 9.5 10H8z" opacity="0.95"/>
+    <text x="28" y="25" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="19" font-weight="700" letter-spacing="0.18em">DECTYR</text>
+  </g>
+</svg>

@@ -1,0 +1,474 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Dectyr RX-5",
+        "description": "Indiquez le préfixe MQTT utilisé par vos scanners Dectyr (par défaut : dronedetector).",
+        "data": {
+          "mqtt_prefix": "Préfixe MQTT"
+        }
+      },
+      "discovery": {
+        "title": "Scanners trouvés",
+        "description": "Ces scanners ont publié un statut pendant la configuration : {scanners}"
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Une seule configuration est autorisée.",
+      "mqtt_required": "L’intégration MQTT doit être configurée et chargée avant d’ajouter Dectyr RX-5.",
+      "unknown": "La configuration ne peut pas continuer depuis cette étape.",
+      "already_configured": "Ce préfixe MQTT est déjà configuré."
+    },
+    "error": {
+      "invalid_prefix": "Préfixe MQTT invalide (autorisé : lettres, chiffres, souligné, barre oblique, tiret)."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Dectyr RX-5",
+        "description": "Délais et alertes pour les scanners et les drones.",
+        "data": {
+          "drone_inactivity_timeout": "Délai d’inactivité du drone (s)",
+          "drone_purge_after": "Purge du drone après inactivité (s)",
+          "scanner_offline_timeout": "Délai hors ligne du scanner (s)",
+          "enable_unknown_scanner_warning": "Alerter si télémétrie reçue avant mise en ligne du scanner",
+          "command_timeout": "Délai de réponse des commandes (s)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "scanner_status": {
+        "name": "État du scanner",
+        "state": {
+          "online": "En ligne",
+          "offline": "Hors ligne",
+          "error": "Erreur",
+          "restarting": "Redémarrage"
+        }
+      },
+      "scanner_uptime": {
+        "name": "Durée de fonctionnement"
+      },
+      "scanner_connection_type": {
+        "name": "Type de connexion",
+        "state": {
+          "ethernet": "Ethernet",
+          "4g": "4G",
+          "wifi": "Wi‑Fi",
+          "unknown": "Inconnu"
+        }
+      },
+      "scanner_mqtt_latency": {
+        "name": "Latence MQTT"
+      },
+      "scanner_cpu_percent": {
+        "name": "Utilisation CPU"
+      },
+      "scanner_memory_used": {
+        "name": "Mémoire utilisée"
+      },
+      "scanner_memory_total": {
+        "name": "Mémoire totale"
+      },
+      "scanner_cpu_temperature": {
+        "name": "Température CPU"
+      },
+      "scanner_pmic_temperature": {
+        "name": "Température PMIC"
+      },
+      "scanner_rp1_temperature": {
+        "name": "Température RP1"
+      },
+      "scanner_enclosure_temperature": {
+        "name": "Température boîtier"
+      },
+      "scanner_lte_signal": {
+        "name": "Signal 4G"
+      },
+      "scanner_lte_operator": {
+        "name": "Identifiant opérateur (4G)"
+      },
+      "scanner_lte_technology": {
+        "name": "Technologie radio (4G)"
+      },
+      "scanner_lte_imei": {
+        "name": "IMEI (4G)"
+      },
+      "scanner_lte_iccid": {
+        "name": "ICCID (4G)"
+      },
+      "scanner_gnss_satellites": {
+        "name": "Satellites GNSS utilisés"
+      },
+      "scanner_gnss_satellites_in_view": {
+        "name": "Satellites GNSS en vue"
+      },
+      "scanner_gnss_hdop": {
+        "name": "DOP horizontal (HDOP)"
+      },
+      "scanner_gnss_fix_quality": {
+        "name": "Qualité de fix GNSS",
+        "state": {
+          "invalid": "Invalide",
+          "gnss": "Constellation GNSS",
+          "dgps": "DGPS"
+        }
+      },
+      "scanner_battery_voltage": {
+        "name": "Tension batterie"
+      },
+      "scanner_battery_soc": {
+        "name": "État de charge batterie"
+      },
+      "scanner_firmware_version": {
+        "name": "Version du firmware"
+      },
+      "scanner_firmware_update_version": {
+        "name": "Version de mise à jour firmware"
+      },
+      "scanner_restart_count": {
+        "name": "Nombre de redémarrages"
+      },
+      "scanner_mqtt_secondary_error": {
+        "name": "Erreur MQTT secondaire"
+      },
+      "scanner_alerts_count": {
+        "name": "Alertes actives"
+      },
+      "scanner_last_alert_message": {
+        "name": "Dernier message d’alerte"
+      },
+      "drone_flight_status": {
+        "name": "État de vol",
+        "state": {
+          "odid_status_undeclared": "Vol normal (non déclaré)",
+          "odid_status_ground": "Au sol",
+          "odid_status_airborne": "En vol",
+          "odid_status_emergency": "Urgence",
+          "odid_status_remote_id_system_failure": "Panne du système Remote ID"
+        }
+      },
+      "drone_altitude_msl": {
+        "name": "Altitude MSL"
+      },
+      "drone_altitude_agl": {
+        "name": "Altitude au-dessus du sol (AGL)"
+      },
+      "drone_speed_horizontal": {
+        "name": "Vitesse horizontale"
+      },
+      "drone_speed_vertical": {
+        "name": "Vitesse verticale"
+      },
+      "drone_direction": {
+        "name": "Cap"
+      },
+      "drone_rssi": {
+        "name": "Force du signal (RSSI)"
+      },
+      "drone_distance_to_scanner": {
+        "name": "Distance au scanner"
+      },
+      "drone_signal_type": {
+        "name": "Type de signal",
+        "state": {
+          "remoteid_eu": "Remote ID (UE)",
+          "remoteid_usa": "Remote ID (États-Unis)",
+          "infodrone_fr": "Infodrone (FR)",
+          "infodrone_ansi": "Infodrone (ANSI)",
+          "ocusync": "OcuSync"
+        }
+      },
+      "drone_broadcast_protocol": {
+        "name": "Protocole de diffusion",
+        "state": {
+          "wifi_beacon": "Balise Wi‑Fi",
+          "wifi_nan": "Wi‑Fi NaN",
+          "ble_legacy": "BLE classique",
+          "ble_5_adv_ext_ind": "BLE 5 ADV_EXT_IND",
+          "ble_5_coded_phy": "BLE 5 PHY codée"
+        }
+      },
+      "drone_channel": {
+        "name": "Canal radio"
+      },
+      "drone_id_type": {
+        "name": "Type d’identifiant",
+        "state": {
+          "odid_idtype_none": "Aucun",
+          "odid_idtype_serial_number": "Numéro de série",
+          "odid_idtype_caa_registration_id": "Immatriculation aéronautique",
+          "odid_idtype_utm_assigned_uuid": "UUID UTM",
+          "odid_idtype_specific_session_id": "ID de session spécifique"
+        }
+      },
+      "drone_ua_type": {
+        "name": "Type d’aéronef",
+        "state": {
+          "odid_uatype_none": "Aucun",
+          "odid_uatype_aeroplane": "Avion",
+          "odid_uatype_helicopter_or_multirotor": "Hélicoptère ou multirotor",
+          "odid_uatype_gyroplane": "Gyroplane",
+          "odid_uatype_hybrid_lift": "Hybride sustentation",
+          "odid_uatype_ornithopter": "Ornithoptère",
+          "odid_uatype_glider": "Planeur",
+          "odid_uatype_kite": "Cerf-volant",
+          "odid_uatype_free_balloon": "Ballon libre",
+          "odid_uatype_captive_balloon": "Ballon captif",
+          "odid_uatype_airship": "Dirigeable",
+          "odid_uatype_free_fall_parachute": "Parachute en chute libre",
+          "odid_uatype_rocket": "Fusée",
+          "odid_uatype_tethered_powered_aircraft": "Aéronef motorisé captif",
+          "odid_uatype_ground_obstacle": "Obstacle au sol",
+          "odid_uatype_other": "Autre"
+        }
+      },
+      "drone_category_eu": {
+        "name": "Catégorie UE",
+        "state": {
+          "undeclared": "Non déclaré",
+          "open": "Ouverte",
+          "specific": "Spécifique",
+          "certified": "Certifiée"
+        }
+      },
+      "drone_class_eu": {
+        "name": "Classe UE",
+        "state": {
+          "undeclared": "Undeclared",
+          "c0": "C0",
+          "c1": "C1",
+          "c2": "C2",
+          "c3": "C3",
+          "c4": "C4",
+          "c5": "C5",
+          "c6": "C6"
+        }
+      },
+      "drone_operator_id": {
+        "name": "Identifiant opérateur"
+      },
+      "drone_operator_country": {
+        "name": "Pays opérateur"
+      },
+      "drone_self_id": {
+        "name": "Identification de mission (self ID)"
+      },
+      "drone_last_seen": {
+        "name": "Dernière réception"
+      },
+      "drone_detected_by_count": {
+        "name": "Scanners ayant vu le drone"
+      },
+      "drone_id": {
+        "name": "Identifiant drone"
+      },
+      "mac_address": {
+        "name": "Adresse MAC"
+      }
+    },
+    "binary_sensor": {
+      "scanner_online": {
+        "name": "Scanner en ligne"
+      },
+      "scanner_mqtt_primary_connected": {
+        "name": "MQTT principal connecté"
+      },
+      "scanner_mqtt_secondary_connected": {
+        "name": "MQTT secondaire connecté"
+      },
+      "scanner_gnss_has_fix": {
+        "name": "Fix GNSS obtenu"
+      },
+      "scanner_lte_connected": {
+        "name": "4G connectée"
+      },
+      "scanner_ac_power": {
+        "name": "Secteur présent"
+      },
+      "scanner_charging": {
+        "name": "En charge"
+      },
+      "scanner_firmware_update_available": {
+        "name": "Mise à jour firmware disponible"
+      },
+      "scanner_has_critical_alert": {
+        "name": "Alerte critique"
+      },
+      "scanner_has_warning_alert": {
+        "name": "Alerte avertissement"
+      },
+      "scanner_watchdog_network_active": {
+        "name": "Watchdog réseau actif"
+      },
+      "drone_airborne": {
+        "name": "En vol"
+      },
+      "drone_emergency": {
+        "name": "Urgence"
+      },
+      "drone_multi_source": {
+        "name": "Détection multi-sources"
+      }
+    },
+    "button": {
+      "scanner_reboot": {
+        "name": "Redémarrer le scanner"
+      },
+      "firmware_check_update": {
+        "name": "Vérifier les mises à jour"
+      },
+      "firmware_refresh": {
+        "name": "Actualiser les métadonnées du firmware"
+      },
+      "get_scanner_logs": {
+        "name": "Télécharger les journaux scanner"
+      },
+      "get_system_logs": {
+        "name": "Télécharger les journaux système"
+      },
+      "get_error_logs": {
+        "name": "Télécharger les journaux d’erreurs"
+      },
+      "get_web_logs": {
+        "name": "Télécharger les journaux web"
+      }
+    },
+    "switch": {
+      "gnss_publish": {
+        "name": "Publication GNSS"
+      },
+      "firmware_auto_update": {
+        "name": "Mises à jour automatiques du firmware"
+      }
+    },
+    "number": {
+      "ups_soc_max": {
+        "name": "Charge max de la batterie UPS"
+      }
+    },
+    "device_tracker": {
+      "scanner_position": {
+        "name": "Position du scanner"
+      },
+      "drone_position": {
+        "name": "Position du drone"
+      },
+      "operator_position": {
+        "name": "Position de l’opérateur"
+      }
+    }
+  },
+  "selector": {
+    "action": {
+      "options": {
+        "reboot": "Redémarrer le scanner",
+        "gps_enable": "Activer la publication GNSS",
+        "gps_disable": "Désactiver la publication GNSS",
+        "set_mqtt_broker": "Configurer le courtier MQTT",
+        "get_logs": "Récupérer les journaux",
+        "firmware_refresh": "Actualiser les métadonnées du firmware",
+        "firmware_upgrade": "Vérifier les mises à jour / installer le firmware",
+        "firmware_auto_update": "Mises à jour automatiques du firmware",
+        "set_ups_soc_max": "Charge max de la batterie UPS"
+      }
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Envoyer une commande au scanner",
+      "description": "Publie une commande MQTT et attend la réponse du scanner.",
+      "fields": {
+        "device_id": {
+          "name": "Appareil scanner",
+          "description": "Identifiant d’appareil Home Assistant du scanner Dectyr."
+        },
+        "action": {
+          "name": "Action",
+          "description": "Nom de l’action (ex. reboot, get_logs)."
+        },
+        "params": {
+          "name": "Paramètres",
+          "description": "Objet JSON optionnel transmis comme paramètres."
+        },
+        "timeout": {
+          "name": "Délai",
+          "description": "Délai d’attente de la réponse en secondes (défaut : options)."
+        }
+      }
+    },
+    "clear_drone": {
+      "name": "Retirer le drone",
+      "description": "Supprime le drone du registre Dectyr et du registre d’appareils.",
+      "fields": {
+        "device_id": {
+          "name": "Appareil drone",
+          "description": "Identifiant d’appareil Home Assistant du drone à purger."
+        }
+      }
+    },
+    "export_drones": {
+      "name": "Exporter les drones",
+      "description": "Liste les drones connus pour toutes les entrées Dectyr.",
+      "fields": {
+        "include_inactive": {
+          "name": "Inclure les inactifs",
+          "description": "Si vrai, inclut les drones marqués indisponibles."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "command_timeout": {
+      "message": "La commande {action} a expiré après {timeout} secondes."
+    },
+    "command_failed": {
+      "message": "Échec de la commande : {message}"
+    },
+    "scanner_not_found": {
+      "message": "L’appareil sélectionné n’est pas un scanner Dectyr RX-5."
+    },
+    "drone_not_found": {
+      "message": "L’appareil sélectionné n’est pas un drone Dectyr RX-5."
+    },
+    "no_coordinator_scanner": {
+      "message": "Aucun coordinateur actif ne gère ce scanner."
+    },
+    "no_coordinator_drone": {
+      "message": "Ce drone n’est présent dans aucun coordinateur Dectyr actif."
+    },
+    "mqtt_required": {
+      "message": "MQTT doit être configuré et chargé."
+    },
+    "invalid_action": {
+      "message": "Action inconnue {action}. Autorisées : {allowed}"
+    }
+  },
+  "issues": {
+    "mqtt_required": {
+      "title": "MQTT requis pour Dectyr RX-5",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Configurer MQTT",
+            "description": "Ouvrez **Paramètres → Appareils et services → Ajouter une intégration** et configurez **MQTT**, ou réactivez votre entrée MQTT existante. Lorsque MQTT est chargé, cette réparation disparaît automatiquement."
+          }
+        },
+        "abort": {
+          "still_required": "MQTT n’est toujours pas chargé. Après configuration, validez à nouveau."
+        }
+      }
+    },
+    "scanner_long_offline": {
+      "title": "Scanner hors ligne depuis plus de 24 h",
+      "description": "Le scanner {scanner_id} n’a pas publié de statut depuis plus de 24 h tout en étant hors ligne. Vérifiez l’alimentation, le réseau, ou supprimez-le s’il n’est plus utilisé."
+    },
+    "unknown_scanner_publishing": {
+      "title": "Scanner inconnu qui publie de la télémétrie",
+      "description": "Le scanner {scanner_id} a envoyé des données drone ou erreur avant un statut **en ligne**. Ajoutez ce scanner à votre installation ou ignorez ce préfixe MQTT."
+    }
+  }
+}

@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      - "v*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: custom_components/dectyr_rx5/frontend/package-lock.json
+
+      - name: Build Lovelace card bundle
+        working-directory: custom_components/dectyr_rx5/frontend
+        run: npm ci && npm run build
+
+      - name: Stage integration (exclude dev artifacts)
+        run: |
+          mkdir -p "${{ github.workspace }}/staging"
+          rsync -a "${{ github.workspace }}/custom_components/dectyr_rx5/" \
+            "${{ github.workspace }}/staging/dectyr_rx5/" \
+            --exclude='frontend/node_modules' \
+            --exclude='frontend/src' \
+            --exclude='frontend/package.json' \
+            --exclude='frontend/package-lock.json' \
+            --exclude='frontend/rollup.config.mjs' \
+            --exclude='frontend/tsconfig.json' \
+            --exclude='frontend/.npmrc' \
+            --exclude='__pycache__' \
+            --exclude='.pytest_cache' \
+            --exclude='.ruff_cache'
+
+      - name: Create integration zip
+        run: |
+          cd "${{ github.workspace }}/staging"
+          zip -r "${{ github.workspace }}/dectyr_rx5.zip" dectyr_rx5
+          ls -lh "${{ github.workspace }}/dectyr_rx5.zip"
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dectyr_rx5.zip

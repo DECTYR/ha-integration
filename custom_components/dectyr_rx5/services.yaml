@@ -1,0 +1,42 @@
+# Service descriptions (English); fields validated in services.py
+send_command:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: dectyr_rx5
+    action:
+      required: true
+      example: "reboot"
+      selector:
+        text:
+    params:
+      required: false
+      default: {}
+      selector:
+        object:
+    timeout:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 600
+          step: 1
+          unit_of_measurement: s
+
+clear_drone:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: dectyr_rx5
+
+export_drones:
+  fields:
+    include_inactive:
+      required: false
+      default: false
+      selector:
+        boolean:

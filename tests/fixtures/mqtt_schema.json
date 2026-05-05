@@ -1,0 +1,436 @@
+{
+  "$comment": "Subset of DECTYR MQTT schema for tests only. Full spec is private.",
+  "version": "1.29.0",
+  "lastUpdated": "2026-04-29",
+  "examples": {
+    "scanner_status_online": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/status",
+      "description": "Scanner en ligne, tout OK (heartbeat toutes les 10s) - v1.26",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "status": "online",
+        "timestamp": "2026-01-22T14:30:00.123Z",
+        "uptime_seconds": 3600,
+        "connection_type": "ethernet",
+        "ip_address": "10.0.0.20",
+        "mac_address": "D8:3A:DD:AB:12:34",
+        "mqtt_latency_ms": 15.2,
+        "alerts": [],
+        "temperatures": {
+          "cpu": 56.0,
+          "pmic": 52.3,
+          "rp1": 48.7,
+          "enclosure": 32.5
+        },
+        "system": {
+          "cpu_percent": 5.0,
+          "memory_used_mb": 1011,
+          "memory_total_mb": 806,
+          "mqtt_broker": "135.125.100.247:8883",
+          "mqtt_connected": true,
+          "mqtt_tls": true,
+          "mqtt_tls_verified": true,
+          "mqtt_last_seen": "2026-01-22T14:29:50Z",
+          "mqtt_secondary_broker": "backup.example.com:8883",
+          "mqtt_secondary_connected": true,
+          "mqtt_secondary_tls": true,
+          "mqtt_secondary_tls_verified": false,
+          "mqtt_secondary_last_seen": "2026-01-22T14:29:50Z"
+        },
+        "wifi_interfaces": [
+          {
+            "interface": "wlan0",
+            "mac": "88:49:2D:AF:21:61",
+            "band": "2.4GHz",
+            "role": "searcher",
+            "mode": "monitor",
+            "channel": 1,
+            "status": "ok"
+          },
+          {
+            "interface": "wlan1",
+            "mac": "88:49:2D:AF:21:C2",
+            "band": "2.4GHz",
+            "role": "tracker",
+            "mode": "monitor",
+            "channel": 11,
+            "status": "ok"
+          },
+          {
+            "interface": "wlan2",
+            "mac": "88:49:2D:AF:21:72",
+            "band": "5GHz",
+            "role": "searcher",
+            "mode": "monitor",
+            "channel": 149,
+            "status": "ok"
+          },
+          {
+            "interface": "wlan3",
+            "mac": "88:49:2D:AF:22:6F",
+            "band": "5GHz",
+            "role": "tracker",
+            "mode": "monitor",
+            "channel": 149,
+            "status": "ok"
+          },
+          {
+            "interface": "ESP32-C3",
+            "role": "scanner",
+            "band": "BLE",
+            "status": "ok"
+          }
+        ],
+        "lte": {
+          "available": true,
+          "connected": true,
+          "operator": "Free",
+          "technology": "LTE",
+          "signal_percent": 57,
+          "ip_address": "10.46.225.28",
+          "imei": "864081062988345",
+          "iccid": "8933150821052872034"
+        },
+        "gnss": {
+          "available": true,
+          "has_fix": true,
+          "latitude": 43.563569,
+          "longitude": 7.136044,
+          "altitude": 36.7,
+          "speed": 0.0,
+          "heading": 0.0,
+          "fix_quality": 1,
+          "gps_utc": "2026-04-02T12:32:18Z",
+          "satellites": 16,
+          "satellites_in_view": 40,
+          "hdop": 0.8,
+          "constellations": {
+            "gps": {
+              "used": 7,
+              "view": 12
+            },
+            "glonass": {
+              "used": 6,
+              "view": 8
+            },
+            "galileo": {
+              "used": 1,
+              "view": 11
+            },
+            "beidou": {
+              "used": 2,
+              "view": 9
+            }
+          },
+          "updated_at": "2026-03-08T15:27:00Z"
+        },
+        "gps_enabled": true
+      }
+    },
+    "scanner_status_online_with_alerts": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/status",
+      "description": "Scanner en ligne avec alertes actives (v1.26)",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "status": "online",
+        "timestamp": "2026-03-24T10:15:00.123Z",
+        "uptime_seconds": 7200,
+        "connection_type": "ethernet",
+        "ip_address": "10.0.0.20",
+        "mac_address": "D8:3A:DD:AB:12:34",
+        "mqtt_latency_ms": 18.5,
+        "alerts": [
+          {
+            "level": "warning",
+            "source": "gps",
+            "message": "Module GNSS non détecté"
+          },
+          {
+            "level": "warning",
+            "source": "modem_4g",
+            "message": "Module 4G non détecté"
+          },
+          {
+            "level": "warning",
+            "source": "mqtt_secondary",
+            "message": "MQTT secondaire: Connexion refusée: Non autorisé (banned)"
+          },
+          {
+            "level": "warning",
+            "source": "esp32_firmware",
+            "message": "ESP32-C3 détecté mais firmware BLE absent"
+          }
+        ],
+        "temperatures": {
+          "cpu": 62.0,
+          "pmic": 55.3,
+          "rp1": 51.2
+        },
+        "system": {
+          "cpu_percent": 12.0,
+          "memory_used_mb": 1200,
+          "memory_total_mb": 8060,
+          "mqtt_broker": "hyperv.infodrones.eu:8883",
+          "mqtt_connected": true,
+          "mqtt_tls": true,
+          "mqtt_tls_verified": true,
+          "mqtt_last_seen": "2026-03-24T10:14:50Z",
+          "mqtt_secondary_broker": "dronedetector.fr:8883",
+          "mqtt_secondary_connected": false,
+          "mqtt_secondary_tls": true,
+          "mqtt_secondary_tls_verified": true,
+          "mqtt_secondary_error": "Connexion refusée: Non autorisé (banned)",
+          "mqtt_secondary_last_seen": "2026-03-24T09:30:00Z"
+        },
+        "wifi_interfaces": [
+          {
+            "interface": "wlan0",
+            "mac": "88:49:2D:AF:21:61",
+            "band": "2.4GHz",
+            "role": "searcher",
+            "mode": "monitor",
+            "channel": 1,
+            "status": "ok"
+          },
+          {
+            "interface": "ESP32-C3",
+            "role": "scanner",
+            "band": "BLE",
+            "status": "no_firmware"
+          }
+        ],
+        "lte": {
+          "available": false
+        },
+        "gnss": {
+          "available": false,
+          "enabled": true,
+          "has_fix": false
+        },
+        "gps_enabled": true
+      }
+    },
+    "scanner_status_offline_graceful": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/status",
+      "description": "Scanner arrêté proprement (systemctl stop)",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "status": "offline",
+        "timestamp": "2026-01-22T15:45:00.123Z",
+        "reason": "shutdown"
+      }
+    },
+    "scanner_status_offline_lwt": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/status",
+      "description": "Scanner crashé/déconnecté (LWT - timestamp approximatif = heure connexion)",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "status": "offline",
+        "timestamp": "2026-01-22T14:30:00.123Z",
+        "reason": "connection_lost"
+      }
+    },
+    "drone_data_complete": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/drones/1581f5fhb228q00201um/data",
+      "description": "Données complètes d'un drone DJI Mavic 3 (v1.9.1: self_id ajouté)",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "mac": "60:60:1F:XX:XX:XX",
+        "timestamp": "2026-01-21T14:30:00.123456Z",
+        "broadcast_protocol": "WiFi-Beacon",
+        "signal_type": "RemoteID-EU",
+        "channel": 6,
+        "rssi": -75,
+        "complete": true,
+        "broadcast_protocols": [
+          "WiFi-Beacon"
+        ],
+        "signal_types": [
+          "RemoteID-EU",
+          "Infodrone-ANSI"
+        ],
+        "multi_source": true,
+        "drone_id": "1581F5FHB228Q00201UM",
+        "id_type": "ODID_IDTYPE_SERIAL_NUMBER",
+        "ua_type": "ODID_UATYPE_HELICOPTER_OR_MULTIROTOR",
+        "identification": {
+          "prefix": "1581F",
+          "manufacturer_code": "1581",
+          "manufacturer_name": "DJI",
+          "manufacturer_country": "China",
+          "model_code": "1581F",
+          "model_name": "Mavic 3 Series",
+          "model_type": "Camera Drone"
+        },
+        "manufacturer": "DJI",
+        "model": "Mavic 3 Series",
+        "latitude": 43.563513,
+        "longitude": 7.136084,
+        "altitude_msl": 52.0,
+        "height_agl": 4.9,
+        "speed_horizontal": 5.5,
+        "speed_vertical": 0.0,
+        "direction": 102.0,
+        "flight_status": "ODID_STATUS_AIRBORNE",
+        "operator": {
+          "latitude": 43.563512,
+          "longitude": 7.13606,
+          "altitude": 47.5,
+          "location_type": "TAKEOFF",
+          "classification_type": "EU",
+          "category_eu": "OPEN",
+          "class_eu": "C1"
+        },
+        "operator_id": "FRA6m1wprcfzsb2n",
+        "operator_country": "FRA",
+        "self_id": "TEST FLY",
+        "scanner_position": {
+          "latitude": 43.5634,
+          "longitude": 7.1359,
+          "altitude": 45.0,
+          "satellites": 16,
+          "satellites_in_view": 40,
+          "hdop": 0.8,
+          "constellations": {
+            "gps": {
+              "used": 7,
+              "view": 12
+            },
+            "glonass": {
+              "used": 6,
+              "view": 8
+            },
+            "galileo": {
+              "used": 1,
+              "view": 11
+            },
+            "beidou": {
+              "used": 2,
+              "view": 9
+            }
+          }
+        },
+        "distance_to_scanner": 25.3
+      }
+    },
+    "command_reboot": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands",
+      "description": "Commande: redémarrer le scanner (v1.14)",
+      "payload": {
+        "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "action": "reboot",
+        "params": {}
+      }
+    },
+    "command_set_mqtt_broker": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands",
+      "description": "Commande: enrollment automatique sur un nouveau serveur de gestion (primaire). Le scanner contacte le serveur, attend l'approbation admin, reçoit credentials + CA, les applique et redémarre.",
+      "payload": {
+        "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "action": "set_mqtt_broker",
+        "params": {
+          "host": "gestion.example.com"
+        }
+      },
+      "responses": [
+        {
+          "status": "success",
+          "message": "Enrollment principal démarré vers gestion.example.com (scanner: 217d1a7e7e3ec86a)"
+        },
+        {
+          "status": "success",
+          "message": "Enregistrement accepté, en attente d'approbation sur gestion.example.com..."
+        },
+        {
+          "status": "completed",
+          "message": "Enrollment principal terminé: mqtt.example.com:8883 (user: scanner-217d). Redémarrage dans 5s..."
+        },
+        {
+          "status": "error",
+          "message": "Timeout: pas d'approbation reçue après 360s"
+        }
+      ]
+    },
+    "command_get_logs": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands",
+      "description": "Commande: récupérer les logs du scanner (v1.20)",
+      "payload": {
+        "request_id": "d4e5f6a7-b8c9-0123-def0-123456789abc",
+        "action": "get_logs",
+        "params": {
+          "type": "scanner",
+          "lines": 200
+        }
+      }
+    },
+    "command_get_logs_response": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands/response",
+      "description": "Réponse: logs récupérés (v1.20)",
+      "payload": {
+        "request_id": "d4e5f6a7-b8c9-0123-def0-123456789abc",
+        "scanner_id": "217d1a7e7e3ec86a",
+        "action": "get_logs",
+        "status": "success",
+        "message": "200 dernières lignes de scanner",
+        "data": {
+          "type": "scanner",
+          "lines": 200,
+          "content": "janv. 22 10:00:01 dronedetector drone-scanner[1234]: ..."
+        },
+        "timestamp": "2026-01-22T10:00:05.123Z"
+      }
+    },
+    "command_set_mqtt_broker_secondary": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands",
+      "description": "Commande: enrollment automatique sur un serveur de gestion secondaire.",
+      "payload": {
+        "request_id": "f6a7b8c9-d0e1-2345-f012-3456789abcde",
+        "action": "set_mqtt_broker",
+        "params": {
+          "broker": "secondary",
+          "host": "gestion2.example.com"
+        }
+      }
+    },
+    "command_response_success": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands/response",
+      "description": "Réponse: commande exécutée avec succès (v1.14)",
+      "payload": {
+        "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "scanner_id": "217d1a7e7e3ec86a",
+        "action": "reboot",
+        "status": "success",
+        "message": "Reboot dans 5 secondes",
+        "timestamp": "2026-02-11T18:00:00.123Z"
+      }
+    },
+    "command_response_error": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/commands/response",
+      "description": "Réponse: commande échouée (v1.14)",
+      "payload": {
+        "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "scanner_id": "217d1a7e7e3ec86a",
+        "action": "set_mqtt_broker",
+        "status": "error",
+        "message": "Connexion impossible vers https://gestion.example.com: Connection refused",
+        "timestamp": "2026-02-11T18:00:05.456Z"
+      }
+    },
+    "scanner_errors": {
+      "topic": "dronedetector/217d1a7e7e3ec86a/errors",
+      "description": "Erreur scanner (extrait du schéma complet pour les tests)",
+      "payload": {
+        "scanner_id": "217d1a7e7e3ec86a",
+        "status": "error",
+        "error_type": "crash",
+        "error_message": "Exit code 1 après 45.2s",
+        "details": {
+          "exit_code": 1,
+          "restart_count": 3,
+          "traceback": "Traceback (most recent call last):\n  File \"scanner.py\", line 42\n    ..."
+        },
+        "timestamp": "2026-01-22T10:30:45.123456Z"
+      }
+    }
+  }
+}
