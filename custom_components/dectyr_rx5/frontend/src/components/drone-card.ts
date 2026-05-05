@@ -2,15 +2,15 @@ import { LitElement, html, css, type CSSResult, type TemplateResult } from "lit"
 import { customElement, property } from "lit/decorators.js";
 
 import { dectyrCardTheme } from "../styles/theme";
-import { rssiBadgeClass, rssiBadgeStyles } from "../styles/badges";
+import { distanceBadgeStyles, rssiBadgeStyles } from "../styles/badges";
 import type { DectyrDrone } from "../types";
 import {
+  distanceClass,
   formatAltitude,
-  formatDistance,
+  formatDistanceCompact,
   formatHeading,
   formatOfflineAgo,
   formatRelativeTime,
-  formatRssiDbm,
   formatSpeed,
   humanizeSlug,
 } from "../utils/format";
@@ -36,12 +36,15 @@ export class DectyrDroneCard extends LitElement {
         @keydown=${this._onKeydown}
       >
         <div class="header">
-          <ha-icon icon=${this._iconForManufacturer()} class="air-icon"></ha-icon>
+          <ha-icon
+            icon=${live ? "mdi:quadcopter" : this._iconForManufacturer()}
+            class="drone-icon"
+          ></ha-icon>
           <div class="title-block">
             <div class="title">${this.drone.display_name}</div>
             <div class="subtitle">${this.drone.drone_id}</div>
           </div>
-          ${live ? this._renderRssiBadge() : this._renderOfflineBadge()}
+          ${live ? this._renderDistanceBadge() : this._renderOfflineBadge()}
         </div>
         ${live ? this._renderTelemetryLine() : ""}
         ${this._renderOperatorLine()}
@@ -77,11 +80,13 @@ export class DectyrDroneCard extends LitElement {
     return "mdi:quadcopter";
   }
 
-  private _renderRssiBadge(): TemplateResult {
-    const cls = rssiBadgeClass(this.drone.rssi);
-    const txt = formatRssiDbm(this.drone.rssi);
+  private _renderDistanceBadge(): TemplateResult {
+    const cls = distanceClass(this.drone.distance_to_scanner);
     return html`
-      <span class="rssi-badge ${cls}"><ha-icon icon="mdi:signal"></ha-icon> ${txt}</span>
+      <span class="distance-badge ${cls}">
+        <ha-icon icon="mdi:map-marker-distance"></ha-icon>
+        ${formatDistanceCompact(this.drone.distance_to_scanner)}
+      </span>
     `;
   }
 
@@ -102,12 +107,6 @@ export class DectyrDroneCard extends LitElement {
     }
     if (this.drone.direction !== null && !Number.isNaN(this.drone.direction)) {
       parts.push(formatHeading(this.drone.direction));
-    }
-    if (
-      this.drone.distance_to_scanner !== null &&
-      !Number.isNaN(this.drone.distance_to_scanner)
-    ) {
-      parts.push(`${formatDistance(this.drone.distance_to_scanner)} to scan`);
     }
     if (parts.length === 0) {
       return html``;
@@ -168,6 +167,7 @@ export class DectyrDroneCard extends LitElement {
     return [
       dectyrCardTheme,
       rssiBadgeStyles,
+      distanceBadgeStyles,
       css`
         :host {
           display: block;
@@ -211,9 +211,10 @@ export class DectyrDroneCard extends LitElement {
           align-items: flex-start;
           gap: 10px;
         }
-        .air-icon {
+        .drone-icon {
           --mdc-icon-size: 28px;
           color: var(--primary-color);
+          flex-shrink: 0;
           margin-top: 2px;
         }
         .title-block {

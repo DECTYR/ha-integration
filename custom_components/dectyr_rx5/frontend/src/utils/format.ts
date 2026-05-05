@@ -33,6 +33,31 @@ export function formatDistance(meters: number | null): string {
   return `${(meters / 1000).toFixed(1)}km`;
 }
 
+/** CSS class for distance-to-scanner badge (far = safer / green, close = red). */
+export function distanceClass(distanceMeters: number | null | undefined): string {
+  if (typeof distanceMeters !== "number" || !isFinite(distanceMeters)) {
+    return "distance-unknown";
+  }
+  if (distanceMeters > 500) {
+    return "distance-far";
+  }
+  if (distanceMeters > 250) {
+    return "distance-medium";
+  }
+  return "distance-close";
+}
+
+/** Short distance for compact badges (no space before unit). */
+export function formatDistanceCompact(meters: number | null | undefined): string {
+  if (typeof meters !== "number" || !isFinite(meters)) {
+    return "—";
+  }
+  if (meters < 1000) {
+    return `${Math.round(meters)}m`;
+  }
+  return `${(meters / 1000).toFixed(1)}km`;
+}
+
 /** RSSI in dBm (integer display). */
 export function formatRssiDbm(rssi: number | null): string {
   if (rssi === null || Number.isNaN(rssi)) {

@@ -3,10 +3,10 @@ import { customElement, property, state } from "lit/decorators.js";
 import type { HomeAssistant, LovelaceCardConfig } from "custom-card-helpers";
 import type { PropertyValues } from "lit";
 
+import "./dectyr-map-card";
 import type { DectyrDrone } from "./types";
 import { DECTYR_BRAND_ICON, DECTYR_LOGO_PNG, DECTYR_LOGO_SVG } from "./const";
 import "./components/drone-list";
-import "./components/live-map";
 import "./components/stat-tile";
 import { dectyrCardTheme } from "./styles/theme";
 import {
@@ -14,7 +14,7 @@ import {
   collectDectyrEntityIds,
   type EntityWsEvent,
 } from "./utils/entity-ws";
-import { findDectyrDrones, findDectyrScanners, findHomeZone } from "./utils/ha-helpers";
+import { findDectyrDrones, findDectyrScanners } from "./utils/ha-helpers";
 
 interface DectyrCardConfig extends LovelaceCardConfig {
   type: string;
@@ -37,6 +37,7 @@ declare global {
       name: string;
       description: string;
       preview: boolean;
+      documentationURL?: string;
     }>;
   }
 }
@@ -52,10 +53,6 @@ export class DectyrSurveillanceCard extends LitElement {
   @state() private _newDroneIds: Set<string> = new Set();
 
   @state() private _headerLogoUrl: string = DECTYR_BRAND_ICON;
-
-  @state() private _highlightedDroneId?: string;
-
-  private _highlightClearTimer?: number;
 
   private _previousDroneIds: Set<string> | null = null;
 
@@ -86,10 +83,6 @@ export class DectyrSurveillanceCard extends LitElement {
       window.clearTimeout(h);
     }
     this._newDroneClearTimers.clear();
-    if (this._highlightClearTimer !== undefined) {
-      window.clearTimeout(this._highlightClearTimer);
-      this._highlightClearTimer = undefined;
-    }
     super.disconnectedCallback();
   }
 
@@ -203,22 +196,6 @@ export class DectyrSurveillanceCard extends LitElement {
     }
   }
 
-  private _onDroneClicked(ev: CustomEvent<{ drone_id?: string }>): void {
-    const id = ev.detail?.drone_id;
-    if (!id) {
-      return;
-    }
-    if (this._highlightClearTimer !== undefined) {
-      window.clearTimeout(this._highlightClearTimer);
-    }
-    this._highlightedDroneId = id;
-    this._highlightClearTimer = window.setTimeout(() => {
-      this._highlightedDroneId = undefined;
-      this._highlightClearTimer = undefined;
-      this.requestUpdate();
-    }, 3000);
-  }
-
   protected render(): TemplateResult {
     if (!this.hass || !this.config) {
       return html`<ha-card><div class="card-content">Loading…</div></ha-card>`;
@@ -229,7 +206,6 @@ export class DectyrSurveillanceCard extends LitElement {
     const allDrones = findDectyrDrones(this.hass, get);
     const liveCount = allDrones.filter((d) => d.is_live).length;
     const visibleDrones = this._hideInactive ? allDrones.filter((d) => d.is_live) : allDrones;
-    const homeZone = findHomeZone(this.hass) ?? undefined;
 
     return html`
       <ha-card>
@@ -280,29 +256,15 @@ export class DectyrSurveillanceCard extends LitElement {
                 </div>
               `
             : ""}
-          <div class="section-title">Map</div>
-          <div class="map-and-list">
-            <dectyr-live-map
-              .hass=${this.hass}
-              .drones=${visibleDrones}
-              .scanners=${scanners}
-              .homeZone=${homeZone}
-              .highlightedDroneId=${this._highlightedDroneId}
-              .trailMinutes=${30}
-            ></dectyr-live-map>
-            <div class="list-column">
-              <div class="section-title list-title">Drones</div>
-              ${allDrones.length > 0
-                ? html`
-                    <dectyr-drone-list
-                      .drones=${visibleDrones}
-                      .newDroneIds=${this._newDroneIds}
-                      @dectyr-drone-clicked=${this._onDroneClicked}
-                    ></dectyr-drone-list>
-                  `
-                : html`<div class="empty list-empty">No drones detected yet.</div>`}
-            </div>
-          </div>
+          <div class="section-title">Drones</div>
+          ${allDrones.length > 0
+            ? html`
+                <dectyr-drone-list
+                  .drones=${visibleDrones}
+                  .newDroneIds=${this._newDroneIds}
+                ></dectyr-drone-list>
+              `
+            : html`<div class="empty">No drones detected yet.</div>`}
         </div>
       </ha-card>
     `;
@@ -406,26 +368,6 @@ export class DectyrSurveillanceCard extends LitElement {
           text-align: center;
           color: var(--secondary-text-color);
         }
-        .map-and-list {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 16px;
-          align-items: start;
-        }
-        @media (min-width: 768px) {
-          .map-and-list {
-            grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-          }
-        }
-        .list-column {
-          min-width: 0;
-        }
-        .list-title {
-          margin-top: 0;
-        }
-        .list-empty {
-          padding: 16px 8px;
-        }
       `,
     ];
   }
@@ -437,6 +379,7 @@ window.customCards.push({
   name: "Dectyr Surveillance",
   description: "Live drone surveillance dashboard for Dectyr RX-5 detectors",
   preview: false,
+  documentationURL: "https://github.com/alexandre0thomas/ha-dectyr",
 });
 
 console.info(

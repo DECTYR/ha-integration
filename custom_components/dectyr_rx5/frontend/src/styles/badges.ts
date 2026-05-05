@@ -42,3 +42,30 @@ export const rssiBadgeStyles = css`
     color: white;
   }
 `;
+
+export const distanceBadgeStyles = css`
+  .distance-badge {
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.85em;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    color: white;
+  }
+  .distance-far {
+    background: #4caf50;
+  }
+  .distance-medium {
+    background: #ff9800;
+  }
+  .distance-close {
+    background: #f44336;
+  }
+  .distance-unknown {
+    background: #9e9e9e;
+  }
+`;

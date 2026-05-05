@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-05
+
+### Added
+- New Lovelace card `custom:dectyr-map-card` with live OpenStreetMap.
+  - Auto-discovers all DECTYR entities (drones, scanners, operators).
+  - Drone markers oriented by heading using a custom airplane icon.
+  - Scanner markers with radar/parabolic antenna icon, color-coded
+    by online status.
+  - Operator markers with pilot silhouette icon (orange) showing
+    controller positions when published by Remote ID.
+  - Home zone circle (100m radius) for context.
+  - Trail polylines tracing the last 30 minutes of drone trajectories
+    (up to 30 points per drone).
+  - Click on any marker opens an info popup with telemetry, drone ID,
+    operator info, etc.
+  - Resizable: optional `aspect_ratio` (e.g. `16:9`, `1:1`) and
+    `height` properties; integrates with HA grid_options for column
+    spans.
+- Distance-to-scanner badge on drone cards (replacing RSSI badge).
+  Color-coded for quick threat assessment:
+  - Red: ≤ 250m (close, priority surveillance)
+  - Orange: 250–500m (intermediate range)
+  - Green: > 500m (distant)
+- Drone icon (mdi:quadcopter) added to live drone cards for visual
+  consistency with offline cards.
+
+### Changed
+- Drone card telemetry line no longer shows distance-to-scanner
+  inline (now shown in the badge to avoid duplication).
+- Surveillance card no longer embeds a map; users compose with the
+  new map card for full surveillance dashboards.
+
+### Recommended dashboard
+```yaml
+type: sections
+max_columns: 12
+sections:
+  - type: grid
+    cards:
+      - type: custom:dectyr-surveillance-card
+        grid_options:
+          columns: 4
+          rows: 8
+      - type: custom:dectyr-map-card
+        title: Surveillance — Live
+        aspect_ratio: '1:1'
+        grid_options:
+          columns: 8
+          rows: 8
+```
+
 ## [0.3.2] - 2026-05-04
 
 ### Added

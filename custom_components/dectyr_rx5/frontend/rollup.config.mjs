@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +8,28 @@ import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const AIRPLANE_SVG_PATH = join(__dirname, "src/assets/airplane.svg");
+
+/** Inlines `assets/airplane.svg` for drone markers (Leaflet divIcon HTML). */
+function airplaneSvgVirtualModule() {
+  return {
+    name: "virtual-airplane-svg",
+    resolveId(id) {
+      if (id === "virtual:airplane-svg") {
+        return "\0virtual:airplane-svg";
+      }
+      return null;
+    },
+    load(id) {
+      if (id === "\0virtual:airplane-svg") {
+        const raw = readFileSync(AIRPLANE_SVG_PATH, "utf8");
+        return `export default ${JSON.stringify(raw)};`;
+      }
+      return null;
+    },
+  };
+}
 
 /** Copy DECTYR logo into dist: prefer integration `logo.png`, then `icon.png`; always ship SVG fallback. */
 function copyDectyrBrandAssets() {
@@ -40,6 +62,7 @@ export default {
     sourcemap: false,
   },
   plugins: [
+    airplaneSvgVirtualModule(),
     resolve({ browser: true }),
     commonjs(),
     typescript({ tsconfig: "./tsconfig.json" }),
