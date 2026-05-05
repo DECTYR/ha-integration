@@ -139,64 +139,71 @@ cellular backhaul, follow **Dectyr** device documentation or vendor support.
 
 ## Lovelace cards
 
-### Dectyr Surveillance card (`dectyr-surveillance-card`)
+The integration ships with two custom Lovelace cards that work
+together to build a complete drone surveillance dashboard:
 
-The integration ships a **custom Lovelace card** bundled as
-`frontend/dist/dectyr-surveillance-card.js`. After you add the **Dectyr RX-5**
-integration and **reload the UI** (or restart Home Assistant), the module is
-registered automatically so dashboards can use:
+- **`dectyr-surveillance-card`** — drone list with rich telemetry
+  cards, stats tiles, scanner status, and a "Hide inactive" toggle.
+- **`dectyr-map-card`** — live Leaflet map with drone markers
+  oriented by heading, scanner radar icons, operator silhouettes,
+  home zone circle, and 30-minute trail polylines.
+
+Both cards auto-discover all DECTYR entities via the integration
+platform — no card configuration is needed. They register
+automatically when the integration starts; no extra Lovelace
+resource line is needed.
+
+### Recommended dashboard
+
+A 1/3 list + 2/3 map layout works well on desktop. Add a new view
+of type **Sections** with `max_columns: 12`, then drop both cards
+side by side:
 
 ```yaml
-type: custom:dectyr-surveillance-card
+type: sections
+max_columns: 12
+sections:
+  - type: grid
+    cards:
+      - type: custom:dectyr-surveillance-card
+        grid_options:
+          columns: 4
+          rows: 8
+      - type: custom:dectyr-map-card
+        title: Surveillance — Live
+        aspect_ratio: '1:1'
+        grid_options:
+          columns: 8
+          rows: 8
 ```
 
-If you still see **Custom element not found**, confirm the file exists under
-`custom_components/dectyr_rx5/frontend/dist/` in your config (HACS / git copies
-must include it). As a fallback, add a **Dashboard resource**: **Settings →
-Dashboards → ⋮ → Resources → + Add resource** → URL
-`/dectyr_rx5_static/dectyr-surveillance-card.js`, type **JavaScript module**, then
-**Reload** the dashboard.
+The map card supports `aspect_ratio` (e.g. `'16:9'`, `'1:1'`,
+`'3:1'`) and `height` (in pixels) properties for fine-grained
+sizing on top of `grid_options`.
 
-Developers can rebuild the bundle with `npm ci && npm run build` inside
-`custom_components/dectyr_rx5/frontend`.
+For full configuration options, see [docs/cards.md](docs/cards.md).
 
-### Map card (scanners and drones)
+### Alternative: native Home Assistant map
 
-Replace **entities** with your own (from the **Device tracker** list for Dectyr
-devices):
+If you prefer the built-in Home Assistant map (no JavaScript
+custom cards), it can also display Dectyr drones and scanners
+through the `device_tracker.*_position_du_drone` and
+`device_tracker.*_position_du_scanner` entities exposed by this
+integration:
 
 ```yaml
 type: map
+title: Drone tracking
 entities:
-  - entity: device_tracker.dectyr_rx5_scanner_example_scanner_position
-  - entity: device_tracker.dectyr_rx5_drone_example_drone_position
-  - entity: device_tracker.dectyr_rx5_drone_example_operator_position
-hours_to_show: 4
+  - device_tracker.matrice_4t_position_du_drone
+  - device_tracker.dectyr_rx_5_6075e342_position_du_scanner
+hours_to_show: 1
 auto_fit: true
 ```
 
-### Scanner alerts (Markdown)
-
-Example **Markdown** card using the last alert **entity**:
-
-```yaml
-type: markdown
-title: Dectyr alerts
-content: |
-  **Last message:** {{ states('sensor.dectyr_rx5_scanner_example_last_alert_message') }}
-  **Active alerts:** {{ states('sensor.dectyr_rx5_scanner_example_alerts_count') }}
-```
-
-### Detected drones (summary card)
-
-```yaml
-type: entities
-title: Detected drones
-entities:
-  - entity: sensor.dectyr_rx5_drone_example_flight_status
-  - entity: sensor.dectyr_rx5_drone_example_altitude_msl
-  - entity: sensor.dectyr_rx5_drone_example_rssi
-```
+Tip: combine with the [auto-entities](https://github.com/thomasloven/lovelace-auto-entities)
+HACS card to dynamically include all detected drones without
+listing each entity manually.
 
 ## Services
 
