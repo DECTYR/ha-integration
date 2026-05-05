@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-05-05
+
+### Added
+- New documentation in `docs/`:
+  - `entities.md`: exhaustive index of all 77 logical entities with type,
+    unit, MQTT source field, and example values.
+  - `automations.md`: overview of the three shipped blueprints plus six
+    copy-paste manual automation examples.
+  - `mqtt.md`: MQTT topic patterns, status and drone payload shapes,
+    command / response format, and discovery notes.
+
+### Documentation
+- Entity translation keys are grouped by domain and scanner vs drone.
+- MQTT reference matches the topics actually subscribed by the
+  integration (`status`, `errors`, `drones/+/data`, `commands/response`).
+
 ## [1.1.0] - 2026-05-05
 
 ### Added
