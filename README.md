@@ -21,6 +21,8 @@ MQTT broker feeds native **devices** and **sensors** for each scanner and
 **operator** metadata when broadcast, **geofencing** via Home Assistant **zones**,
 and automations for **UAV** incursions on your own stack.
 
+![Dectyr surveillance dashboard](assets/screenshot-DECTYR-HA.jpg)
+
 ## Features
 
 - MQTT auto-discovery for all your Dectyr detectors
