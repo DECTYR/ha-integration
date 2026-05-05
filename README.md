@@ -2,8 +2,9 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/DECTYR/ha-integration?include_prereleases)](https://github.com/DECTYR/ha-integration/releases)
-[![License](https://img.shields.io/github/license/DECTYR/ha-integration)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Validate](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml)
+[![Test](https://github.com/DECTYR/ha-integration/actions/workflows/test.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/test.yml)
 
 The **[DECTYR RX-5](https://dectyr.com/en/products/rx-5)** is a **passive RF**
 field scanner for **UAV detection**, **UAS Remote ID**, and **broadcast drone
