@@ -1,9 +1,9 @@
 # Dectyr RX-5 for Home Assistant — passive UAV Remote ID detection
 
-[![HACS Validate / hassfest](https://github.com/dectyr/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/dectyr/ha-integration/actions/workflows/validate.yml)
-[![Tests](https://github.com/dectyr/ha-integration/actions/workflows/test.yml/badge.svg)](https://github.com/dectyr/ha-integration/actions/workflows/test.yml)
-[![GitHub release](https://img.shields.io/github/v/release/dectyr/ha-integration?sort=semver)](https://github.com/dectyr/ha-integration/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/DECTYR/ha-integration?include_prereleases)](https://github.com/DECTYR/ha-integration/releases)
+[![License](https://img.shields.io/github/license/DECTYR/ha-integration)](LICENSE)
+[![Validate](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml)
 
 The **[DECTYR RX-5](https://dectyr.com/en/products/rx-5)** is a **passive RF**
 field scanner for **UAV detection**, **UAS Remote ID**, and **broadcast drone
@@ -115,21 +115,23 @@ vendor tooling)—see **Dectyr** product documentation for the exact menus.
 
 ### Via HACS (recommended)
 
-1. HACS &rarr; **Integrations** &rarr; **&vellip;** menu &rarr; **Custom repositories**
-2. URL: `https://github.com/dectyr/ha-integration`
-3. Category: **Integration**
-4. Click **Add**
-5. Find **Dectyr RX-5** in HACS and install
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=DECTYR&repository=ha-integration&category=integration)
+
+Click the badge above to add this repository to HACS automatically. Then click **Install** and restart Home Assistant.
+
+**Or manually:**
+
+1. Open HACS → Integrations
+2. Click ⋮ menu → **Custom repositories**
+3. Repository: `https://github.com/DECTYR/ha-integration`
+4. Category: `Integration`
+5. Click **Add** → Install
 6. Restart Home Assistant
-7. **Settings &rarr; Devices & services &rarr; + Add integration** &rarr; **Dectyr RX-5**
-   (only after the **MQTT** integration is connected).
-8. Enter the MQTT **prefix** (default `dronedetector`). It must **match** the
-   prefix configured on each RX-5 (see **Requirements**).
+7. Settings → Devices & Services → **Add Integration** → **Dectyr RX-5**
 
 ### Manual installation
 
-1. Copy `custom_components/dectyr_rx5/` into `<config>/custom_components/`
-2. Restart Home Assistant, then follow steps 7+ above.
+Copy `custom_components/dectyr_rx5/` to your `config/custom_components/` folder and restart Home Assistant.
 
 ## Scanner configuration
 
