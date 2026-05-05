@@ -4,7 +4,7 @@ blueprint:
     Send a notification when a drone is detected inside a Home Assistant zone
     (useful for restricted areas, security perimeters, gardens, etc.).
   domain: automation
-  source_url: https://github.com/alexandre0thomas/ha-dectyr/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_in_zone.yaml
+  source_url: https://github.com/dectyr/ha-integration/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_in_zone.yaml
   input:
     zone_to_watch:
       name: Zone to monitor

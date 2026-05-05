@@ -1,8 +1,8 @@
 # Dectyr RX-5 for Home Assistant — passive UAV Remote ID detection
 
-[![HACS Validate / hassfest](https://github.com/alexandre0thomas/ha-dectyr/actions/workflows/validate.yml/badge.svg)](https://github.com/alexandre0thomas/ha-dectyr/actions/workflows/validate.yml)
-[![Tests](https://github.com/alexandre0thomas/ha-dectyr/actions/workflows/test.yml/badge.svg)](https://github.com/alexandre0thomas/ha-dectyr/actions/workflows/test.yml)
-[![GitHub release](https://img.shields.io/github/v/release/alexandre0thomas/ha-dectyr?sort=semver)](https://github.com/alexandre0thomas/ha-dectyr/releases)
+[![HACS Validate / hassfest](https://github.com/dectyr/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/dectyr/ha-integration/actions/workflows/validate.yml)
+[![Tests](https://github.com/dectyr/ha-integration/actions/workflows/test.yml/badge.svg)](https://github.com/dectyr/ha-integration/actions/workflows/test.yml)
+[![GitHub release](https://img.shields.io/github/v/release/dectyr/ha-integration?sort=semver)](https://github.com/dectyr/ha-integration/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 The **[DECTYR RX-5](https://dectyr.com/en/products/rx-5)** is a **passive RF**
@@ -116,7 +116,7 @@ vendor tooling)—see **Dectyr** product documentation for the exact menus.
 ### Via HACS (recommended)
 
 1. HACS &rarr; **Integrations** &rarr; **&vellip;** menu &rarr; **Custom repositories**
-2. URL: `https://github.com/alexandre0thomas/ha-dectyr`
+2. URL: `https://github.com/dectyr/ha-integration`
 3. Category: **Integration**
 4. Click **Add**
 5. Find **Dectyr RX-5** in HACS and install
@@ -264,9 +264,9 @@ trigger:
 
 Files live under `custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/`:
 
-- [`notify_drone_in_zone.yaml`](https://github.com/alexandre0thomas/ha-dectyr/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_in_zone.yaml) &mdash; notify when a drone enters a zone
-- [`notify_scanner_critical_alert.yaml`](https://github.com/alexandre0thomas/ha-dectyr/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_scanner_critical_alert.yaml) &mdash; scanner critical alert
-- [`notify_drone_lost.yaml`](https://github.com/alexandre0thomas/ha-dectyr/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_lost.yaml) &mdash; drone signal loss
+- [`notify_drone_in_zone.yaml`](https://github.com/dectyr/ha-integration/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_in_zone.yaml) &mdash; notify when a drone enters a zone
+- [`notify_scanner_critical_alert.yaml`](https://github.com/dectyr/ha-integration/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_scanner_critical_alert.yaml) &mdash; scanner critical alert
+- [`notify_drone_lost.yaml`](https://github.com/dectyr/ha-integration/blob/main/custom_components/dectyr_rx5/blueprints/automation/dectyr_rx5/notify_drone_lost.yaml) &mdash; drone signal loss
 
 In Home Assistant: **Settings &rarr; Automations & scenes &rarr; Blueprints &rarr;
 Import blueprint**, then paste the raw GitHub URL of the YAML you want.

@@ -924,7 +924,7 @@ window.customCards.push({
   name: "Dectyr Map (debug)",
   description: "Minimal map card for debugging Leaflet integration",
   preview: false,
-  documentationURL: "https://github.com/alexandre0thomas/ha-dectyr",
+  documentationURL: "https://github.com/dectyr/ha-integration",
 });
 
 console.info(

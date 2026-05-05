@@ -379,7 +379,7 @@ window.customCards.push({
   name: "Dectyr Surveillance",
   description: "Live drone surveillance dashboard for Dectyr RX-5 detectors",
   preview: false,
-  documentationURL: "https://github.com/alexandre0thomas/ha-dectyr",
+  documentationURL: "https://github.com/dectyr/ha-integration",
 });
 
 console.info(
