@@ -8,22 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.3] - 2026-05-06
 
 ### Fixed
-- **Cards not loading in HA Android Companion app after app restart**:
-  the Android WebView has a known bug where ETag-based revalidation
-  can fail with `ERR_CACHE_MISS`, preventing the custom card bundle
-  from loading. The integration now serves the bundle with
-  `Cache-Control: no-store` to bypass WebView caching. Bundle is
-  re-fetched on each app open (~76 KB, negligible).
-- This fixes the issue where users had to clear WebView cache
-  manually after each app restart for cards to display.
+- Investigation of intermittent custom card loading issues in the
+  Home Assistant Companion app for Android. After testing several
+  approaches, reverted to standard `StaticPathConfig` serving with
+  `cache_headers=False` (the prior behavior). A previously attempted
+  `Cache-Control: no-store` workaround did not resolve the issue.
 
 ### Notes
-- Web (Chrome/Firefox) was unaffected — only the Android WebView
-  was triggering this bug.
-- After updating, users may need to clear their WebView cache
-  one last time:
-  Settings (Android) → Apps → Android System WebView →
-  Storage → Clear cache.
+- If you experience "Custom element not found" errors in the
+  Android Companion app:
+  1. Add the resource manually under
+     **Settings → Dashboards → Resources**:
+     URL: `/dectyr_rx5_static/dectyr-surveillance-card.js`
+     Type: `JavaScript Module`
+  2. Clear the Android System WebView cache:
+     Settings (Android) → Apps → Android System WebView →
+     Storage → Clear cache.
+- A more robust fix is being investigated for a future release.
 
 ## [1.1.2] - 2026-05-05
 
