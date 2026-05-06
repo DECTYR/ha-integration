@@ -1,7 +1,7 @@
 # Dectyr RX-5 for Home Assistant — passive UAV Remote ID detection
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/v/release/DECTYR/ha-integration?include_prereleases)](https://github.com/DECTYR/ha-integration/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/DECTYR/ha-integration.svg?include_prereleases)](https://github.com/DECTYR/ha-integration/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Validate](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml)
 [![Test](https://github.com/DECTYR/ha-integration/actions/workflows/test.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/test.yml)
