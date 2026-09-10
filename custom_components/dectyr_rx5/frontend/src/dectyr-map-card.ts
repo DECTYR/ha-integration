@@ -88,7 +88,7 @@ async function loadLeafletStyleSheet(): Promise<CSSStyleSheet> {
   return _leafletCssPromise;
 }
 
-@customElement("dectyr-map-card")
+@customElement("dectyr-map-card-impl")
 export class DectyrMapCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
@@ -128,6 +128,10 @@ export class DectyrMapCard extends LitElement {
 
   private _invalidateSizeTimer?: ReturnType<typeof window.setTimeout>;
 
+  private _disconnectTimer?: ReturnType<typeof window.setTimeout>;
+
+  private _resizeObserver?: ResizeObserver;
+
   /** Avoid repeated setView/invalidateSize when `hass` reference churns with same lat/lon. */
   private _lastAppliedCenterKey = "";
 
@@ -140,6 +144,20 @@ export class DectyrMapCard extends LitElement {
       throw new Error("Invalid configuration");
     }
     this.config = config;
+  }
+
+  public getGridOptions(): Record<string, number | string> {
+    const c = this.config;
+    let rows = 8;
+    if (c && typeof c.height === "number" && c.height > 0 && isFinite(c.height)) {
+      rows = Math.max(4, Math.min(12, Math.round((c.height + 8) / 64)));
+    }
+    return {
+      columns: 12,
+      rows,
+      min_columns: 3,
+      min_rows: 4,
+    };
   }
 
   public getCardSize(): number {
@@ -205,6 +223,19 @@ export class DectyrMapCard extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     this._disconnected = false;
+    if (this._disconnectTimer !== undefined) {
+      window.clearTimeout(this._disconnectTimer);
+      this._disconnectTimer = undefined;
+    }
+    if (this.hasUpdated) {
+      const root = this.shadowRoot;
+      if (root && !root.querySelector("#dectyr-leaflet-fallback")) {
+        void this._applyLeafletCss(root);
+      }
+      if (!this._map && !this._initLock) {
+        void this._initMap();
+      }
+    }
   }
 
   protected async firstUpdated(changed: PropertyValues<this>): Promise<void> {
@@ -217,17 +248,7 @@ export class DectyrMapCard extends LitElement {
 
     const root = this.shadowRoot;
     if (root) {
-      try {
-        const leafletSheet = await loadLeafletStyleSheet();
-        if (this._disconnected) {
-          return;
-        }
-        if (!root.adoptedStyleSheets.includes(leafletSheet)) {
-          root.adoptedStyleSheets = [...root.adoptedStyleSheets, leafletSheet];
-        }
-      } catch (e) {
-        console.error("[dectyr-map-card] Failed to load Leaflet CSS:", e);
-      }
+      await this._applyLeafletCss(root);
     }
 
     if (!this._disconnected) {
@@ -257,10 +278,14 @@ export class DectyrMapCard extends LitElement {
     }
 
     if (changed.has("hass") && this._map && this.hass) {
-      this._updateTrails();
-      this._updateScannerMarkers();
-      this._updateDroneMarkers();
-      this._updateOperatorMarkers();
+      try {
+        this._updateTrails();
+        this._updateScannerMarkers();
+        this._updateDroneMarkers();
+        this._updateOperatorMarkers();
+      } catch (err) {
+        console.error("[dectyr-map-card] marker update failed", err);
+      }
     }
 
     if (!this._map || !changed.has("hass") || !this.hass?.config) {
@@ -286,9 +311,14 @@ export class DectyrMapCard extends LitElement {
   }
 
   disconnectedCallback(): void {
-    console.info("[dectyr-map-card] disconnectedCallback — cleanup");
     this._disconnected = true;
-    this._destroyMap();
+    if (this._disconnectTimer !== undefined) {
+      window.clearTimeout(this._disconnectTimer);
+    }
+    this._disconnectTimer = window.setTimeout(() => {
+      this._disconnectTimer = undefined;
+      this._destroyMap();
+    }, 400);
     super.disconnectedCallback();
   }
 
@@ -322,6 +352,14 @@ export class DectyrMapCard extends LitElement {
       if (!container) {
         console.warn("[dectyr-map-card] Container ref not available");
         return;
+      }
+
+      const sized = await this._waitForContainerSize(container);
+      if (this._disconnected || !this.isConnected) {
+        return;
+      }
+      if (!sized) {
+        console.warn("[dectyr-map-card] Container still 0-size, initializing anyway");
       }
 
       console.info("[dectyr-map-card] Container dimensions:", {
@@ -384,6 +422,8 @@ export class DectyrMapCard extends LitElement {
         console.info("[dectyr-map-card] Home circle added");
       }
 
+      this._observeContainerSize(container);
+
       this._lastAppliedCenterKey = this._centerKey(center[0], center[1]);
 
       this._invalidateSizeTimer = window.setTimeout(() => {
@@ -408,6 +448,66 @@ export class DectyrMapCard extends LitElement {
         this._initStarted = false;
       }
     }
+  }
+
+  private async _applyLeafletCss(root: ShadowRoot): Promise<void> {
+    if (root.querySelector("#dectyr-leaflet-fallback")) {
+      return;
+    }
+    try {
+      const cssText = await fetch(LEAFLET_CSS_URL).then((r) => {
+        if (!r.ok) {
+          throw new Error(`Leaflet CSS HTTP ${r.status}`);
+        }
+        return r.text();
+      });
+      if (this._disconnected) {
+        return;
+      }
+      const style = document.createElement("style");
+      style.id = "dectyr-leaflet-fallback";
+      style.textContent = cssText;
+      root.appendChild(style);
+    } catch (e) {
+      console.warn("[dectyr-map-card] <style> CSS inject failed, trying adoptedStyleSheets", e);
+      try {
+        const leafletSheet = await loadLeafletStyleSheet();
+        if (this._disconnected) {
+          return;
+        }
+        if (!root.adoptedStyleSheets.includes(leafletSheet)) {
+          root.adoptedStyleSheets = [...root.adoptedStyleSheets, leafletSheet];
+        }
+      } catch (e2) {
+        console.error("[dectyr-map-card] Failed to load Leaflet CSS:", e2);
+      }
+    }
+  }
+
+  private async _waitForContainerSize(el: HTMLElement, timeoutMs = 2500): Promise<boolean> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (el.offsetWidth > 8 && el.offsetHeight > 8) {
+        return true;
+      }
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => resolve());
+      });
+    }
+    return el.offsetWidth > 8 && el.offsetHeight > 8;
+  }
+
+  private _observeContainerSize(container: HTMLElement): void {
+    this._resizeObserver?.disconnect();
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    this._resizeObserver = new ResizeObserver(() => {
+      if (!this._disconnected && this._map) {
+        this._map.invalidateSize({ pan: false });
+      }
+    });
+    this._resizeObserver.observe(container);
   }
 
   private _ensureDivIconMarkerStyles(): void {
@@ -804,6 +904,8 @@ export class DectyrMapCard extends LitElement {
   }
 
   private _destroyMap(): void {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
     if (this._invalidateSizeTimer !== undefined) {
       window.clearTimeout(this._invalidateSizeTimer);
       this._invalidateSizeTimer = undefined;
@@ -886,9 +988,18 @@ export class DectyrMapCard extends LitElement {
     return css`
       :host {
         display: block;
+        box-sizing: border-box;
       }
       ha-card {
         overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+      .map-shell {
+        position: relative;
+        width: 100%;
+        min-height: 280px;
       }
       .card-header {
         display: flex;
@@ -898,21 +1009,18 @@ export class DectyrMapCard extends LitElement {
         font-weight: 500;
         font-size: 1.1em;
         border-bottom: 1px solid var(--divider-color);
+        flex-shrink: 0;
       }
       .card-header ha-icon {
         color: var(--primary-color);
       }
-      .map-shell {
-        position: relative;
-        width: 100%;
-      }
       .map-container {
-        position: relative;
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
         border-radius: 8px;
         overflow: hidden;
-        contain: layout size;
       }
     `;
   }
@@ -928,13 +1036,13 @@ window.customCards.push({
 });
 
 console.info(
-  "%c DECTYR-MAP-CARD %c v0.7.0 (resizable) ",
+  "%c DECTYR-MAP-CARD %c v0.7.3 ",
   "color: white; background: #00569b; font-weight: 700;",
   "color: #00569b; background: white; font-weight: 700;",
 );
 
 declare global {
   interface HTMLElementTagNameMap {
-    "dectyr-map-card": DectyrMapCard;
+    "dectyr-map-card-impl": DectyrMapCard;
   }
 }

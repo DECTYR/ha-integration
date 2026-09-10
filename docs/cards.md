@@ -161,6 +161,13 @@ sections:
 
 ## Troubleshooting
 
+### The cards show "configuration error" in the Android Companion app
+
+The integration preloads `/dectyr_rx5_static/dectyr-boot.js`. If you
+added a Lovelace resource manually, it must be that URL (JavaScript
+module), not `dectyr-surveillance-card.js`. Then fully close and
+reopen the Companion app.
+
 ### The map shows a circle but no drone or scanner markers
 
 - Check that drones are being detected (live count in the

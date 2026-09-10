@@ -50,6 +50,10 @@ function copyDectyrBrandAssets() {
       } else if (existsSync(pngFromIcon)) {
         copyFileSync(pngFromIcon, join(dist, "dectyr-logo.png"));
       }
+      const bootSrc = join(__dirname, "dectyr-boot.js");
+      if (existsSync(bootSrc)) {
+        copyFileSync(bootSrc, join(dist, "dectyr-boot.js"));
+      }
     },
   };
 }

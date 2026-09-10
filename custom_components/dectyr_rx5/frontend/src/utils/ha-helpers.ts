@@ -36,7 +36,7 @@ export interface HassDeviceRegDisplay {
   name_by_user?: string | null;
   manufacturer?: string | null;
   model?: string | null;
-  identifiers?: [string, string][];
+  identifiers?: unknown;
 }
 
 export type HassWithReg = HomeAssistant & {
@@ -90,30 +90,39 @@ function cleanEntityState(state: string | undefined): string | null {
   return s;
 }
 
-function droneIdFromIdentifiers(pairs: [string, string][] | undefined): string | null {
-  if (!pairs?.length) {
-    return null;
+/** Normalize HA device.identifiers (tuples, sparse slots, or unexpected shapes). */
+function identifierPairs(raw: unknown): [string, string][] {
+  if (!Array.isArray(raw)) {
+    return [];
   }
-  for (const p of pairs) {
-    if (p[0] === DOMAIN && typeof p[1] === "string" && p[1].startsWith("drone:")) {
-      return p[1].slice("drone:".length);
+  const out: [string, string][] = [];
+  for (const p of raw) {
+    if (!Array.isArray(p) || p.length < 2) {
+      continue;
+    }
+    const domain = p[0];
+    const ident = p[1];
+    if (typeof domain !== "string" || typeof ident !== "string") {
+      continue;
+    }
+    out.push([domain, ident]);
+  }
+  return out;
+}
+
+function droneIdFromIdentifiers(raw: unknown): string | null {
+  for (const [domain, ident] of identifierPairs(raw)) {
+    if (domain === DOMAIN && ident.startsWith("drone:")) {
+      return ident.slice("drone:".length);
     }
   }
   return null;
 }
 
-function scannerIdFromIdentifiers(pairs: [string, string][] | undefined): string | null {
-  if (!pairs?.length) {
-    return null;
-  }
-  for (const p of pairs) {
-    if (
-      p[0] === DOMAIN &&
-      typeof p[1] === "string" &&
-      p[1].length > 0 &&
-      !p[1].startsWith("drone:")
-    ) {
-      return p[1];
+function scannerIdFromIdentifiers(raw: unknown): string | null {
+  for (const [domain, ident] of identifierPairs(raw)) {
+    if (domain === DOMAIN && ident.length > 0 && !ident.startsWith("drone:")) {
+      return ident;
     }
   }
   return null;
@@ -148,10 +157,11 @@ export function findDectyrScanners(
   }
   const out: DectyrScanner[] = [];
   for (const dev of Object.values(h.devices)) {
-    const sid = scannerIdFromIdentifiers(dev.identifiers);
-    if (!sid) {
-      continue;
-    }
+    try {
+      const sid = scannerIdFromIdentifiers(dev.identifiers);
+      if (!sid) {
+        continue;
+      }
     const entMap = entitiesForDevice(h, dev.id);
     let statusEntity: string | undefined;
     let isOnline = false;
@@ -218,6 +228,9 @@ export function findDectyrScanners(
       latitude,
       longitude,
     });
+    } catch (err) {
+      console.warn("[dectyr] skip scanner device", dev?.id, err);
+    }
   }
   return out.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -255,6 +268,7 @@ export function findDectyrDrones(hass: HomeAssistant, getState?: GetEntityState)
   }
   const out: DectyrDrone[] = [];
   for (const dev of Object.values(h.devices)) {
+    try {
     const droneId = droneIdFromIdentifiers(dev.identifiers);
     if (!droneId) {
       continue;
@@ -359,6 +373,9 @@ export function findDectyrDrones(hass: HomeAssistant, getState?: GetEntityState)
       distance_to_scanner: parseNum(readSensor("drone_distance_to_scanner")),
       last_seen: lastSeen,
     });
+    } catch (err) {
+      console.warn("[dectyr] skip drone device", dev?.id, err);
+    }
   }
   return out;
 }

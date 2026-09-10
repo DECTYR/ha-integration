@@ -15,6 +15,8 @@ import {
   type EntityWsEvent,
 } from "./utils/entity-ws";
 import { findDectyrDrones, findDectyrScanners } from "./utils/ha-helpers";
+import { defineDectyrHosts, mountAllDectyrHosts } from "./utils/dectyr-host";
+import { watchAndRebuildDectyrCards } from "./utils/rebuild-on-define";
 
 interface DectyrCardConfig extends LovelaceCardConfig {
   type: string;
@@ -42,7 +44,7 @@ declare global {
   }
 }
 
-@customElement("dectyr-surveillance-card")
+@customElement("dectyr-surveillance-card-impl")
 export class DectyrSurveillanceCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
@@ -77,6 +79,15 @@ export class DectyrSurveillanceCard extends LitElement {
     return 14;
   }
 
+  public getGridOptions(): Record<string, number | string> {
+    return {
+      columns: 12,
+      rows: 8,
+      min_columns: 3,
+      min_rows: 4,
+    };
+  }
+
   disconnectedCallback(): void {
     void this._disconnectEntitySubscription();
     for (const h of this._newDroneClearTimers.values()) {
@@ -89,8 +100,12 @@ export class DectyrSurveillanceCard extends LitElement {
   protected willUpdate(changed: PropertyValues<this>): void {
     super.willUpdate(changed);
     if (changed.has("hass") && this.hass) {
-      const drones = findDectyrDrones(this.hass, (id) => this._getMergedState(id));
-      this._detectNewDrones(drones);
+      try {
+        const drones = findDectyrDrones(this.hass, (id) => this._getMergedState(id));
+        this._detectNewDrones(drones);
+      } catch (err) {
+        console.error("[dectyr-surveillance-card] willUpdate failed", err);
+      }
     }
   }
 
@@ -201,9 +216,18 @@ export class DectyrSurveillanceCard extends LitElement {
       return html`<ha-card><div class="card-content">Loading…</div></ha-card>`;
     }
 
-    const get = (id: string) => this._getMergedState(id);
-    const scanners = findDectyrScanners(this.hass, get);
-    const allDrones = findDectyrDrones(this.hass, get);
+    let scanners: ReturnType<typeof findDectyrScanners> = [];
+    let allDrones: ReturnType<typeof findDectyrDrones> = [];
+    try {
+      const get = (id: string) => this._getMergedState(id);
+      scanners = findDectyrScanners(this.hass, get);
+      allDrones = findDectyrDrones(this.hass, get);
+    } catch (err) {
+      console.error("[dectyr-surveillance-card] render failed", err);
+      return html`<ha-card
+        ><div class="card-content">Dectyr card error: ${String(err)}</div></ha-card
+      >`;
+    }
     const liveCount = allDrones.filter((d) => d.is_live).length;
     const visibleDrones = this._hideInactive ? allDrones.filter((d) => d.is_live) : allDrones;
 
@@ -276,6 +300,12 @@ export class DectyrSurveillanceCard extends LitElement {
       css`
         :host {
           display: block;
+          height: 100%;
+          box-sizing: border-box;
+        }
+        ha-card {
+          height: 100%;
+          box-sizing: border-box;
         }
         .header {
           padding: 14px 16px;
@@ -383,7 +413,11 @@ window.customCards.push({
 });
 
 console.info(
-  "%c DECTYR-SURVEILLANCE-CARD %c F3 ",
+  "%c DECTYR-SURVEILLANCE-CARD %c 1.1.4 ",
   "color: white; background: #00569b; font-weight: 700;",
   "color: #00569b; background: white; font-weight: 700;",
 );
+
+defineDectyrHosts();
+mountAllDectyrHosts();
+watchAndRebuildDectyrCards();

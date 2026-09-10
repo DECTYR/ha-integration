@@ -18,6 +18,7 @@ _FRONTEND_FLAG = f"{DOMAIN}_lovelace_frontend_registered"
 
 URL_BASE = "/dectyr_rx5_static"
 CARD_FILENAME = "dectyr-surveillance-card.js"
+BOOT_FILENAME = "dectyr-boot.js"
 
 
 async def async_register_frontend(hass: HomeAssistant) -> None:
@@ -56,13 +57,13 @@ async def async_register_frontend(hass: HomeAssistant) -> None:
     )
 
     if DATA_EXTRA_MODULE_URL in hass.data:
-        add_extra_js_url(hass, f"{URL_BASE}/{CARD_FILENAME}")
+        add_extra_js_url(hass, f"{URL_BASE}/{BOOT_FILENAME}?v=1.1.4")
     else:
         _LOGGER.debug(
             "Frontend module loader not ready; card is served at %s/%s but not auto-injected. "
             "Add it under Settings → Dashboards → Resources if needed.",
             URL_BASE,
-            CARD_FILENAME,
+            BOOT_FILENAME,
         )
     hass.data[_FRONTEND_FLAG] = True
     _LOGGER.info("Registered Dectyr Surveillance Lovelace card (%s)", CARD_FILENAME)

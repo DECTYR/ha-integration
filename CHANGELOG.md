@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2026-09-10
+
+### Fixed
+- Lovelace custom cards failing with "configuration error" in the
+  Home Assistant Companion app for Android after closing and reopening
+  the app. A tiny `dectyr-boot.js` module now registers host custom
+  elements immediately; the Lit implementations load afterwards.
+- Map card remaining blank in masonry layouts (zero-height Leaflet
+  container, CSS injection, and premature destroy on WebView detach).
+- Device identifier parsing crashing the cards when Home Assistant
+  returned sparse or unexpected identifier tuples.
+
+### Changed
+- Frontend extra module URL is `/dectyr_rx5_static/dectyr-boot.js`.
+  If you added a dashboard resource manually, point it at that file
+  instead of `dectyr-surveillance-card.js`.
+
 ## [1.1.3] - 2026-05-06
 
 ### Fixed
