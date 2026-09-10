@@ -63,18 +63,134 @@ The RX-5 must be configured in its own UI or documentation to use **this broker*
 (host, port, TLS, credentials). Home Assistant must use the **same broker** via
 its MQTT integration—otherwise it will never see scanner or drone messages.
 
-### Home Assistant MQTT integration (mandatory)
+The **Dectyr RX-5** integration has **no MQTT username, password, or TLS fields
+of its own**. It reuses the connection from Home Assistant’s **MQTT**
+integration. Configure credentials and encryption there first.
 
-1. In Home Assistant go to **Settings → Devices & services → + Add integration**.
-2. Choose **MQTT**.
-3. Enter your broker **Broker** (hostname or IP), **Port**, and if required
-   **Username**, **Password**, and **TLS** options (CA, client cert, etc.).
-4. Save and confirm the integration shows **Connected** (check **Settings →
-   Devices & services → MQTT → Configure** or the integration card).
+### Eclipse Mosquitto: users, passwords, and TLS
+
+Use **two logins** when you can: one for Home Assistant, one for the RX-5.
+Do not enable anonymous access on a broker reachable from the internet.
+
+#### 1. Create users on Mosquitto
+
+**Home Assistant OS — official Mosquitto add-on**
+
+1. Install **Mosquitto broker** from **Settings → Add-ons**.
+2. When you later add the **MQTT** integration, Home Assistant can **set up
+   Mosquitto automatically**. It then generates a **secret username/password
+   for Home Assistant only**. You cannot (and should not) copy that account
+   onto the RX-5.
+3. Add a **separate login** for scanners in the add-on **Configuration**:
+
+```yaml
+logins:
+  - username: rx5
+    password: "choose-a-strong-password"
+```
+
+Save, then **restart the Mosquitto add-on**. Put that `rx5` user on each
+scanner. Leave Home Assistant on the auto-generated account.
+
+**Standalone or Docker Mosquitto** (not the add-on)
+
+Create a password file and disable anonymous access:
+
+```bash
+mosquitto_passwd -c /mosquitto/config/passwd homeassistant
+mosquitto_passwd    /mosquitto/config/passwd rx5
+```
+
+In `mosquitto.conf`:
+
+```conf
+listener 1883
+allow_anonymous false
+password_file /mosquitto/config/passwd
+```
+
+Restart Mosquitto. Use `homeassistant` in Home Assistant and `rx5` on the
+scanners (or the same user on both if you prefer a simpler lab setup).
+
+#### 2. Connect Home Assistant (username and password)
+
+1. **Settings → Devices & services → + Add integration → MQTT**.
+2. If you use the official Mosquitto add-on, accept **automatic
+   configuration** when offered. Home Assistant fills in broker, port, user,
+   and password; you are done for the HA client.
+3. Otherwise enter:
+   - **Broker**: hostname or IP of Mosquitto (e.g. `192.168.1.10` or
+     `mqtt.example.com`). From Home Assistant Container, `localhost` is the
+     **container**, not the Pi — use the host IP or the Docker service name.
+   - **Port**: `1883` without TLS, `8883` with TLS (see below).
+   - **Username** / **Password**: the Mosquitto user for Home Assistant.
+4. Submit. The MQTT integration card should show **Connected**.
+
+To change credentials later: **Settings → Devices & services → MQTT →
+Configure → Reconfigure**.
+
+Confirm with a subscribe (add `-u` / `-P` if anonymous access is off):
+
+```bash
+mosquitto_sub -h <broker> -p 1883 -u homeassistant -P '<password>' \
+  -t 'dronedetector/#' -v
+```
+
+#### 3. TLS (MQTT over TLS, typically port 8883)
+
+Enable TLS on Mosquitto **and** in Home Assistant. The RX-5 must use the
+**same host, port, and CA**. Home Assistant requires MQTT **protocol version
+5** (Mosquitto 2.x does).
+
+Example Mosquitto TLS listener (adjust paths):
+
+```conf
+listener 8883
+allow_anonymous false
+password_file /mosquitto/config/passwd
+cafile /mosquitto/config/ca.crt
+certfile /mosquitto/config/server.crt
+keyfile /mosquitto/config/server.key
+# require_certificate false   # set true only if you use client certificates (mTLS)
+```
+
+The certificate **CN / SAN must match** the hostname (or IP) you type in
+Home Assistant. A cert for `mqtt.example.com` will fail if HA connects to
+`192.168.1.10`.
+
+In the MQTT integration (add or **Reconfigure**), set **Port** to `8883`,
+then open **Other settings**:
+
+| Home Assistant control | When to use |
+| --- | --- |
+| **Broker certificate validation → Auto** | Broker cert is from a public CA (e.g. Let’s Encrypt). HA uses its bundled CAs. |
+| **Broker certificate validation → Custom** | Self-signed or private CA. Choose **Next** and upload the **CA** file (PEM or DER), not the server cert. |
+| **Ignore broker certificate validation** | Only if the name in the cert does not match the broker host. Prefer fixing the cert/SAN instead. |
+| **Use a client certificate** | Only if Mosquitto has `require_certificate true` (mTLS). Upload **client cert + private key** together (PEM or DER). If the key is encrypted, enter its password when uploading. |
+
+Client certificates are applied only when broker certificate validation is
+enabled.
+
+If you see `SSL: CERTIFICATE_VERIFY_FAILED`, try **Broker certificate
+validation → Auto** for a public CA, or **Custom** with your Mosquitto CA
+for a private PKI. Wrong file (server cert instead of CA) or hostname
+mismatch are the usual causes.
+
+Plain MQTT (port **1883**, no TLS) is acceptable on a trusted LAN. Use TLS
+whenever the broker is reachable off-LAN (4G scanners, VPN, internet).
+
+#### 4. Point the RX-5 at the same broker
+
+On the scanner, set the **same** broker host, port (`1883` or `8883`),
+username/password (the `rx5` login), and TLS/CA as Mosquitto. A mismatch
+here looks like “MQTT works in HA but no Dectyr devices”.
+
+### Home Assistant MQTT integration (mandatory)
 
 The **Dectyr RX-5** integration **refuses to start** until at least one MQTT
 config entry is **loaded** (you would see an abort reason such as **MQTT
-required** if you skip this step).
+required** if you skip this step). After MQTT shows **Connected**, add
+**Dectyr RX-5** under **Settings → Devices & services**.
 
 ### MQTT topic prefix (must match the scanners)
 

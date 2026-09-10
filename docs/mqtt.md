@@ -200,12 +200,23 @@ Log downloads may include a `data` object with `type`, `lines`, `content`.
    `drone_distance_to_scanner` state follows the **strongest RSSI** source
    (`primary_distance_to_scanner`).
 
+## Broker authentication and TLS
+
+Dectyr does **not** store MQTT credentials. Home Assistant’s **MQTT**
+integration owns the connection (user, password, TLS). Step-by-step
+Mosquitto + Home Assistant setup is in the root [README](../README.md#eclipse-mosquitto-users-passwords-and-tls).
+
 ## Debugging
 
 ```bash
-# All traffic for one scanner
-mosquitto_sub -h <broker> -p 1883 \
+# All traffic for one scanner (add -u / -P if the broker requires a login)
+mosquitto_sub -h <broker> -p 1883 -u <user> -P '<password>' \
   -t "dronedetector/<scanner_id>/#" -v
+
+# TLS (port 8883) with a private CA
+mosquitto_sub -h <broker> -p 8883 -u <user> -P '<password>' \
+  --cafile /path/to/ca.crt \
+  -t "dronedetector/+/status" -C 1 | python3 -m json.tool
 
 # Pretty-print one status message
 mosquitto_sub -h <broker> -p 1883 \
