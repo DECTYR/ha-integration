@@ -8,5 +8,5 @@ automations, and bundled blueprints.
 **Repository:** [github.com/dectyr/ha-integration](https://github.com/dectyr/ha-integration)
 
 **Requirements:** Home Assistant 2024.1 or newer, MQTT integration configured.
-Recommended install via HACS (custom repository), then add the **Dectyr RX-5**
-integration.
+Recommended install via HACS (default store: search **Dectyr RX-5**), then add
+the **Dectyr RX-5** integration.

@@ -1,6 +1,6 @@
 # Dectyr RX-5 for Home Assistant — passive UAV Remote ID detection
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/DECTYR/ha-integration.svg?include_prereleases)](https://github.com/DECTYR/ha-integration/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Validate](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/DECTYR/ha-integration/actions/workflows/validate.yml)
@@ -116,19 +116,17 @@ vendor tooling)—see **Dectyr** product documentation for the exact menus.
 
 ### Via HACS (recommended)
 
+This integration is in the **HACS default store**. Search for **Dectyr RX-5**, download it, then restart Home Assistant.
+
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=DECTYR&repository=ha-integration&category=integration)
 
-Click the badge above to add this repository to HACS automatically. Then click **Install** and restart Home Assistant.
+1. Open HACS → search **Dectyr RX-5** (or use the badge above)
+2. **Download**
+3. Restart Home Assistant
+4. Settings → Devices & services → **Add integration** → **Dectyr RX-5**
 
-**Or manually:**
-
-1. Open HACS → Integrations
-2. Click ⋮ menu → **Custom repositories**
-3. Repository: `https://github.com/DECTYR/ha-integration`
-4. Category: `Integration`
-5. Click **Add** → Install
-6. Restart Home Assistant
-7. Settings → Devices & Services → **Add Integration** → **Dectyr RX-5**
+If it does not appear in search yet, add it once as a custom repository:
+`https://github.com/DECTYR/ha-integration` (category **Integration**).
 
 ### Manual installation
 
